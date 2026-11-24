@@ -19,4 +19,22 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// POST /api/users/login - Authenticate a user
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'Incorrect email or password.' });
+        }
+        const correctPw = await user.isCorrectPassword(password);
+        if (!correctPw) {
+            return res.status(400).json({ message: 'Incorrect email or password.' });
+        }
+        res.json({ message: 'Password correct!', user });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
 export default router;
