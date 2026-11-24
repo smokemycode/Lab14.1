@@ -1,5 +1,6 @@
-//Blueprint for a user object
+// Blueprint for a user object
 import { Schema, model } from "mongoose";
+import bcrypt from "bcryptjs";
 
 const userSchema = new Schema({
     username: {
@@ -19,6 +20,14 @@ const userSchema = new Schema({
         required: true,
         minlength: 8,
     },
+});
+
+// Hash the password before saving the user document
+userSchema.pre('save', async function (next) {
+    if (this.isNew || this.isModified('password')) {
+        const saltRounds =10;
+        this.password = await bcrypt.hash(this.password, saltRounds);
+    }
 });
 
 // Create and export the User model
