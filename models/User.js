@@ -35,6 +35,7 @@ userSchema.methods.isCorrectPassword = async function (password) {
     return bcrypt.compare(password, this.password)
 };
 
+// Hide the password field when converting the user document to JSON
 userSchema.set('toJSON', {
     transform: (doc, ret) => {
         delete ret.password;
