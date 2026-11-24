@@ -1,9 +1,13 @@
-// Load articles needed for the server
+// Load packages needed for the server
 import 'dotenv/config';
 import express from 'express';
+import connectDB from './config/db.js';
 
 // Create the app
 const app = express();
+
+// Connect to the database
+connectDB();
 
 // Middleware to turn JSON bodies into JS objects
 app.use(express.json());
