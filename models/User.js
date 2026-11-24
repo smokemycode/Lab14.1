@@ -1,6 +1,6 @@
 // Blueprint for a user object
 import { Schema, model } from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema({
     username: {
@@ -23,11 +23,23 @@ const userSchema = new Schema({
 });
 
 // Hash the password before saving the user document
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
     if (this.isNew || this.isModified('password')) {
         const saltRounds =10;
         this.password = await bcrypt.hash(this.password, saltRounds);
     }
+});
+
+// Compare the provided password with the hashed password in the database
+userSchema.methods.isCorrectPassword = async function (password) {
+    return bcrypt.compare(password, this.password)
+};
+
+userSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        delete ret.password;
+        return ret;
+    },
 });
 
 // Create and export the User model
