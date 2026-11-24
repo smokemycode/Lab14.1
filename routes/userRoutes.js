@@ -1,6 +1,7 @@
 // Routes for user-related operations
 import { Router } from 'express';
 import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
 const router = Router();
 
@@ -31,7 +32,10 @@ router.post('/login', async (req, res) => {
         if (!correctPw) {
             return res.status(400).json({ message: 'Incorrect email or password.' });
         }
-        res.json({ message: 'Password correct!', user });
+        // Put only the user ID in the token payload for security
+        const payload = { _id: user._id, username: user.username };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
+        res.json({ token, user });
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
