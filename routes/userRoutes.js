@@ -32,7 +32,7 @@ router.post('/login', async (req, res) => {
         if (!correctPw) {
             return res.status(400).json({ message: 'Incorrect email or password.' });
         }
-        // Put only the user ID in the token payload for security
+        // Put only safe info in the token payload for security
         const payload = { _id: user._id, username: user.username };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
         res.json({ token, user });
